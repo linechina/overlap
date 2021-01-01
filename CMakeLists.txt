@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(overlap)
+project(overlap LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -7,19 +7,9 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include_directories(${PROJECT_SOURCE_DIR})
 
 # Add compiler flags for C++11.
-if(${CMAKE_VERSION} VERSION_LESS "3.1")
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-        "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        set(CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
-    else()
-        message(FATAL_ERROR
-            "Unsupported compiler detected: ${CMAKE_CXX_COMPILER_ID}")
-    endif()
-else()
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set up the Eigen3 library.
 find_package(Eigen3 3.0.0 REQUIRED)
@@ -30,4 +20,10 @@ option(OVERLAP_TESTS "Build the tests" ON)
 if(OVERLAP_TESTS)
     enable_testing()
     add_subdirectory(test)
+endif()
+
+# Build the Python bindings using pybind11.
+option(OVERLAP_PYTHON "Build the Python bindings" ON)
+if(OVERLAP_PYTHON)
+    add_subdirectory(python)
 endif()
